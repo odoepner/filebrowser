@@ -44,6 +44,13 @@
                   description="User database that can be updated and saved"
                   factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
                   pathname="conf/tomcat-users.xml"/>
+
+        <Resource name="UserDatabase2" auth="Container"
+                  type="org.apache.catalina.UserDatabase"
+                  description="User database that can be updated and saved"
+                  factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+                  pathname="conf/tomcat-users-2.xml"/>
+
     </GlobalNamingResources>
 
     <!-- A "Service" is a collection of one or more "Connectors" that share
@@ -111,13 +118,15 @@
 
             <!-- Use the LockOutRealm to prevent attempts to guess user passwords
                  via a brute-force attack -->
-            <Realm className="org.apache.catalina.realm.LockOutRealm">
+            <Realm className="org.apache.catalina.realm.DelegatingRealm">
                 <!-- This Realm uses the UserDatabase configured in the global JNDI
                      resources under the key "UserDatabase".  Any edits
                      that are performed against this UserDatabase are immediately
                      available for use by the Realm.  -->
                 <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
                        resourceName="UserDatabase"/>
+                <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+                       resourceName="UserDatabase2"/>
             </Realm>
 
             <Host name="localhost" appBase="webapps"
