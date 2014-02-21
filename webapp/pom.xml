@@ -13,5 +13,6 @@
     </parent>
 
     <artifactId>webapp</artifactId>
+    <packaging>war</packaging>
 
 </project>
