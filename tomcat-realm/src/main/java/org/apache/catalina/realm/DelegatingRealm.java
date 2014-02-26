@@ -5,10 +5,10 @@ import java.security.Principal;
 import org.apache.catalina.Realm;
 
 /**
- * A realm that delegates authorization (login validation) to one realm
- * and role lookup for authenticated users to another realm
+ * Delegates authorization (login validation) to its first nested realm
+ * and role lookup for authenticated users to its second nested realm
  */
-public class DelegatingRealm extends RealmBase {
+public final class DelegatingRealm extends RealmBase {
 
     private Realm loginRealm;
     private Realm rolesRealm;
@@ -35,21 +35,22 @@ public class DelegatingRealm extends RealmBase {
     }
 
     @Override
-    protected String getPassword(String s) {
-        return getAsRealmBase(loginRealm).getPassword(s);
+    protected String getPassword(String username) {
+        return realmBase(loginRealm).getPassword(username);
     }
 
     @Override
-    protected Principal getPrincipal(String s) {
-        return getAsRealmBase(rolesRealm).getPrincipal(s);
+    protected Principal getPrincipal(String username) {
+        return realmBase(rolesRealm).getPrincipal(username);
     }
 
-    private RealmBase getAsRealmBase(Realm realm) {
+    private RealmBase realmBase(Realm realm) {
         if (realm instanceof RealmBase) {
-            return ((RealmBase) rolesRealm);
+            return (RealmBase) rolesRealm;
         } else {
             throw new IllegalArgumentException(
-                "Nested realm is not instanceof " + RealmBase.class);
+                    "Nested realm " + realm.getClass()
+                            + " is not instanceof " + RealmBase.class);
         }
     }
 }
